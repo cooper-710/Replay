@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MLB 3D Pitch Replay</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0d0d0d;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #three-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+    }
+
+    #controls {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 16px;
+      padding: 20px;
+      width: 260px;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(255,255,255,0.15);
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      font-size: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 4px;
+      font-size: 14px;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      #controls {
+        width: calc(100vw - 40px);
+        left: 10px;
+        right: 10px;
+        padding: 14px;
+      }
+    }
+
+    #scorebug {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      z-index: 10;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 240px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="three-canvas"></canvas>
+
+  <div id="controls">
+    <label for="batterSelect">Select Batter</label>
+    <select id="batterSelect"></select>
+
+    <label for="dateSelect">Select Game Date</label>
+    <select id="dateSelect"></select>
+
+    <label for="pitcherSelect">Select Pitcher</label>
+    <select id="pitcherSelect"></select>
+
+    <label for="pitchSelect">Select Pitch</label>
+    <select id="pitchSelect"></select>
+
+    <label for="cameraSelect">Camera Angle</label>
+    <select id="cameraSelect">
+      <option value="catcher">Home Plate View</option>
+      <option value="pitcher">Pitcher POV</option>
+      <option value="rhh">Right-Handed Hitter POV</option>
+      <option value="lhh">Left-Handed Hitter POV</option>
+      <option value="1b">1st Base POV</option>
+      <option value="3b">3rd Base POV</option>
+    </select>
+
+    <label><input type="checkbox" id="trailToggle"> Show Trail</label>
+
+    <button id="replayBtn">Replay</button>
+    <button id="toggleBtn">Pause</button>
+  </div>
+
+  <div id="scorebug">
+    <div id="scorebugInning"></div>
+    <div id="scorebugCount"></div>
+    <div id="scorebugOuts"></div>
+    <div id="scorebugRunners"></div>
+    <div id="scorebugResult"></div>
+  </div>
+
+  <script type="module" src="./main_perfect.js"></script>
+</body>
+</html>

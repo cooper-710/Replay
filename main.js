@@ -46,7 +46,7 @@ function getSpinAxisVector(degrees) {
   return new THREE.Vector3(Math.cos(radians), 0, Math.sin(radians)).normalize();
 }
 
-async async function setupScene() {
+async function setupScene() {
 
   const canvas = document.getElementById('three-canvas');
 

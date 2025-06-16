@@ -47,60 +47,211 @@ function getSpinAxisVector(degrees) {
 }
 
 function setupScene() {
+
   const canvas = document.getElementById('three-canvas');
+
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+
   renderer.setSize(window.innerWidth, window.innerHeight);
+
   renderer.shadowMap.enabled = true;
 
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // enables soft shadowing
+
+
+
   scene = new THREE.Scene();
+
   scene.background = new THREE.Color(0x222222);
 
+
+
+  // === Mound ===
+
+  const moundGeometry = new THREE.CylinderGeometry(2.0, 9, 2.0, 64);
+
+  const moundMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown
+
+  const mound = new THREE.Mesh(moundGeometry, moundMaterial);
+
+  mound.position.set(0, 0, 0);  // Just beneath the pitch release point
+
+  scene.add(mound);
+
+  mound.receiveShadow = true;
+
+  mound.castShadow = false;
+
+
+
+
+
+  // === Pitcher's Rubber ===
+
+  const rubberGeometry = new THREE.BoxGeometry(1, 0.05, 0.18); // Width, height, depth in feet
+
+  const rubberMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+
+  const rubber = new THREE.Mesh(rubberGeometry, rubberMaterial);
+
+  rubber.position.set(0, 1.05, 0);
+
+  scene.add(rubber);
+
+  rubber.castShadow = true;
+
+  rubber.receiveShadow = true;
+
+
+
+
+
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+
   camera.position.set(0, 2.5, -65);
+
   camera.lookAt(0, 2.5, 0);
+
   scene.add(camera);
 
+  
+
   scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const hemiLight = new THREE.HemisphereLight(0xb1e1ff, 0x8b4513, 0.4);
+
+
+
+  const hemiLight = new THREE.HemisphereLight(0xb1e1ff, 0x8b4513, 0.4); 
+
+// Sky blue tint from above, dirt brown bounce from below
+
   scene.add(hemiLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff0e5, 1.0);
+
+
+  
+
+  const dirLight = new THREE.DirectionalLight(0xfff0e5, 1.0); // warm sunlight
+
   dirLight.position.set(5, 10, 5);
+
+  dirLight.castShadow = true;
+
+
+
+  dirLight.shadow.mapSize.width = 1024;
+
+  dirLight.shadow.mapSize.height = 1024;
+
+  dirLight.shadow.camera.near = 1;
+
+  dirLight.shadow.camera.far = 100;
+
+  dirLight.shadow.camera.left = -20;
+
+  dirLight.shadow.camera.right = 20;
+
+  dirLight.shadow.camera.top = 20;
+
+  dirLight.shadow.camera.bottom = -20;
+
+
+
+  const dirTarget = new THREE.Object3D();
+
+  dirTarget.position.set(0, 0, 0);
+
+  scene.add(dirTarget);
+
+  dirLight.target = dirTarget;
+
+
+
   scene.add(dirLight);
 
+
+
+
+
+
+
+  const plateLight = new THREE.PointLight(0xffffff, 0.6, 100);
+
+  plateLight.position.set(0, 3, -60.5);
+
+  scene.add(plateLight);
+
+
+
   const ground = new THREE.Mesh(
+
     new THREE.PlaneGeometry(200, 200),
-    new THREE.MeshStandardMaterial({ color: 0x1e472d })
+
+    new THREE.MeshStandardMaterial({ color: 0x1e472d, roughness: 1 })
+
   );
+
   ground.rotation.x = -Math.PI / 2;
+
   scene.add(ground);
 
+  ground.receiveShadow = true;
+
+
+
   const zone = new THREE.LineSegments(
+
     new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.42, 2.0)),
+
     new THREE.LineBasicMaterial({ color: 0xffffff })
+
   );
+
   zone.position.set(0, 2.5, -60.5);
+
   scene.add(zone);
 
+
+
+  const shape = new THREE.Shape();
+
+  shape.moveTo(-0.85, 0);
+
+  shape.lineTo(0.85, 0);
+
+  shape.lineTo(0.85, 0.5);
+
+  shape.lineTo(0, 1.0);
+
+  shape.lineTo(-0.85, 0.5);
+
+  shape.lineTo(-0.85, 0);
+
   const plate = new THREE.Mesh(
-    new THREE.ShapeGeometry(
-      new THREE.Shape()
-        .moveTo(-0.85, 0).lineTo(0.85, 0).lineTo(0.85, 0.5)
-        .lineTo(0, 1.0).lineTo(-0.85, 0.5).lineTo(-0.85, 0)
-    ),
+
+    new THREE.ShapeGeometry(shape),
+
     new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 })
+
   );
+
   plate.rotation.x = -Math.PI / 2;
+
   plate.position.set(0, 0.011, -60.5);
+
   scene.add(plate);
 
+
+
   window.addEventListener('resize', () => {
+
     camera.aspect = window.innerWidth / window.innerHeight;
+
     camera.updateProjectionMatrix();
+
     renderer.setSize(window.innerWidth, window.innerHeight);
+
   });
 
-  clock = new THREE.Clock();
 }
 
 function throwPitch(pitch) {

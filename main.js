@@ -491,7 +491,7 @@ function addCheckboxes(pitcherData) {
         } else {
           removeBallByType(combo);
         }
-      });
+      };
 
       const label = document.createElement('label');
       label.htmlFor = combo;
@@ -508,7 +508,7 @@ function addCheckboxes(pitcherData) {
 //     group.appendChild(title);
 //     group.appendChild(grid);
 //     container.appendChild(group); // this matters most
-  });
+  );
 }
 function populateDropdowns(data) {
 
@@ -669,7 +669,7 @@ function removeBall(pitchType) {
       scene.remove(ball);
       const type = ball.userData.type.split(' ')[0];
       trailDots = trailDots.filter(dotObj => {
-        const keep = dotObj.mesh.userData?.type !== ball.userData.type;
+        const keep = dotObj.mesh.userData.type !== ball.userData.type;
         if (!keep) scene.remove(dotObj.mesh);
         return keep;
       });
@@ -868,7 +868,7 @@ function removeBallByType(pitchType) {
       scene.remove(ball);
       const type = ball.userData.type.split(' ')[0];
       trailDots = trailDots.filter(dotObj => {
-        const keep = dotObj.mesh.userData?.type !== ball.userData.type;
+        const keep = dotObj.mesh.userData.type !== ball.userData.type;
         if (!keep) scene.remove(dotObj.mesh);
         return keep;
       });

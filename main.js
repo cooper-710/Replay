@@ -118,7 +118,7 @@ function throwPitch(pitch) {
     t0,
     release: {
       x: -pitch.release_pos_x,
-      y: pitch.release_pos_z,
+      y: -pitch.release_pos_z,
       z: -pitch.release_pos_y
     },
     velocity: {

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MLB 3D Pitch Visualizer</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0d0d0d;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #three-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width:  100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+    }
+
+    #controls {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 16px;
+      padding: 20px;
+      width: 240px;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(255,255,255,0.15);
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      font-size: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 4px;
+      font-size: 14px;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #pitchCheckboxes {
+      all: unset;
+      display: block !important;
+      margin-top: 16px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .pitch-type-group {
+      display: block !important;
+      clear: both;
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 16px;
+    }
+
+    .pitch-type-title {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 4px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      justify-items: center;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      font-size: 13px;
+      gap: 4px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 600px) {
+      #controls {
+        width: calc(100vw - 40px);
+        left: 10px;
+        right: 10px;
+        padding: 14px;
+      }
+    }
+  
+  #scorebug {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 15;
+    background: rgba(0,0,0,0.75);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: Arial, sans-serif;
+    color: white;
+    min-width: 180px;
+  }
+
+
+  .stacked-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    width: 240px !important;
+  }
+
+  .form-row {
+    margin-bottom: 14px !important;
+  }
+
+  .form-row label {
+    display: block !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    margin-bottom: 6px !important;
+  }
+
+  .form-row select,
+  .form-row button {
+    width: 100% !important;
+    padding: 6px !important;
+    font-size: 14px !important;
+    border-radius: 5px !important;
+    border: none !important;
+  }
+
+  .form-row input[type="checkbox"] {
+    margin-right: 6px !important;
+  }
+
+</style>
+</head>
+<body>
+  <canvas id="three-canvas"></canvas>
+
+  <div id="scorebug">
+    <div><strong id="scorebugTeam">TEAM</strong> vs <strong id="scorebugOpponent">OPP</strong></div>
+    <div>Batter: <span id="scorebugBatter">Name</span></div>
+    <div>Pitcher: <span id="scorebugPitcher">Name</span></div>
+    <div>Inning: <span id="scorebugTopBot">Top</span> <span id="scorebugInning">1</span></div>
+    <div>Count: <span id="scorebugCount">0-0</span></div>
+      </div>
+
+  <div id="controls">
+    <label for="teamSelect">Select Team</label>
+    <select id="teamSelect"></select>
+
+    <label for="batterSelect">Select Batter</label>
+    <select id="batterSelect"></select>
+
+    <select id="dateSelect">
+      <option value="">Select Game Date</option>
+    </select>
+
+
+    <label for="cameraSelect">Camera Angle</label>
+    <select id="cameraSelect">
+      <option value="catcher">Home Plate View</option>
+      <option value="pitcher">Batter POV</option>
+      <option value="rhh">Right-Handed Hitter POV</option>
+      <option value="lhh">Left-Handed Hitter POV</option>
+      <option value="1b">1st Base POV</option>
+      <option value="3b">3rd Base POV</option>
+    </select>
+
+    <label><input type="checkbox" id="trailToggle"> Show Trail</label>
+
+    <button id="replayBtn">Replay</button>
+    <button id="toggleBtn">Pause</button>
+
+    <div id="pitchCheckboxes"></div>
+  </div>
+
+  <div id="metricsPanel" style="position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.75); padding:12px; border-radius:12px; max-width:260px; font-size:13px; display:none; color:white; z-index:10;"></div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -208,7 +208,7 @@ function animate() {
     }
 
     
-    if (ball.position.z <= -60.5 && playing) {
+    if (ball.position.z <= -60 && playing) {
       playing = false;
       document.getElementById('toggleBtn').textContent = 'Play';
     }

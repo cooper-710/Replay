@@ -126,13 +126,13 @@ function addBall(pitch, pitchTypeLabel) {
     t0: t0,
     release: {
       x: pitch.release_pos_x,
-      y: pitch.release_pos_y,
+      y: -pitch.release_pos_y,
       z: pitch.release_pos_z
     },
     velocity: {
       x: pitch.vx0,
-      y: pitch.vy0,
-      z: pitch.vz0
+      y: -pitch.vy0,
+      z: -pitch.vz0
     },
     accel: {
       x: pitch.ax,

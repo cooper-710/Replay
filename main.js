@@ -125,19 +125,19 @@ function addBall(pitch, pitchTypeLabel) {
     type: pitchTypeLabel,
     t0: t0,
     release: {
-      x: -pitch.release_pos_x,
-      y: pitch.release_pos_z,
-      z: -pitch.release_pos_y
+      x: pitch.release_pos_x,
+      y: pitch.release_pos_y,
+      z: pitch.release_pos_z
     },
     velocity: {
-      x: -pitch.vx0,
-      y: pitch.vz0,
-      z: pitch.vy0
+      x: pitch.vx0,
+      y: pitch.vy0,
+      z: pitch.vz0
     },
     accel: {
-      x: -pitch.ax,
-      y: pitch.az,
-      z: pitch.ay
+      x: pitch.ax,
+      y: pitch.ay,
+      z: pitch.az
     },
     spinRate: pitch.release_spin_rate || 0,
     spinAxis: getSpinAxisVector(pitch.spin_axis || 0)

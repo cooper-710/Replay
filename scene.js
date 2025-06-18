@@ -45,8 +45,16 @@ export function initScene() {
   const dirLight = new THREE.DirectionalLight(0xfff0e5, 1.0);
   dirLight.position.set(5, 10, 5);
   dirLight.castShadow = true;
-  dirLight.shadow.mapSize.set(1024, 1024);
-  dirLight.shadow.camera.set(-20, 20, 20, -20, 1, 100);
+
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+
+  dirLight.shadow.camera.left = -20;
+  dirLight.shadow.camera.right = 20;
+  dirLight.shadow.camera.top = 20;
+  dirLight.shadow.camera.bottom = -20;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.far = 100;
 
   const dirTarget = new THREE.Object3D();
   dirTarget.position.set(0, 0, 0);

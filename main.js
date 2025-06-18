@@ -141,12 +141,12 @@ function throwPitch(pitch) {
       z: -pitch.release_pos_y
     },
     velocity: {
-      x: -pitch.vx0,
-      y: pitch.vz0,
+      x: pitch.vx0,
+      y: -pitch.vz0,
       z: pitch.vy0
     },
     accel: {
-      x: -pitch.ax,
+      x: pitch.ax,
       y: pitch.az,
       z: pitch.ay
     },

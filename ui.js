@@ -1,5 +1,10 @@
 // ui.js
-import { loadAndAnimatePitch, setTrailVisibility, pauseAnimation, replayAnimation } from './animation.js';
+import {
+  loadAndAnimatePitch,
+  setTrailVisibility,
+  pauseAnimation,
+  replayAnimation
+} from './animation.js';
 
 export function setupUI(sceneObjects, pitchLoader) {
   const teamSelect = document.getElementById('teamSelect');
@@ -14,7 +19,7 @@ export function setupUI(sceneObjects, pitchLoader) {
 
   let currentPitchData = null;
 
-  // Load pitch_data.json and populate dropdowns
+  // === LOAD PITCH DATA ===
   fetch('pitch_data.json')
     .then(res => res.json())
     .then(data => {
@@ -27,8 +32,8 @@ export function setupUI(sceneObjects, pitchLoader) {
       }
 
       teamSelect.addEventListener('change', () => {
-        const team = teamSelect.value;
         batterSelect.innerHTML = '';
+        const team = teamSelect.value;
         const batters = Object.keys(data[team]);
         for (const batter of batters) {
           const option = document.createElement('option');
@@ -36,6 +41,7 @@ export function setupUI(sceneObjects, pitchLoader) {
           option.textContent = batter;
           batterSelect.appendChild(option);
         }
+        batterSelect.dispatchEvent(new Event('change'));
       });
 
       batterSelect.addEventListener('change', () => {
@@ -49,6 +55,7 @@ export function setupUI(sceneObjects, pitchLoader) {
           option.textContent = date;
           dateSelect.appendChild(option);
         }
+        dateSelect.dispatchEvent(new Event('change'));
       });
 
       dateSelect.addEventListener('change', () => {
@@ -63,6 +70,7 @@ export function setupUI(sceneObjects, pitchLoader) {
           option.textContent = pitcher;
           pitcherSelect.appendChild(option);
         }
+        pitcherSelect.dispatchEvent(new Event('change'));
       });
 
       pitcherSelect.addEventListener('change', () => {
@@ -78,6 +86,7 @@ export function setupUI(sceneObjects, pitchLoader) {
           option.textContent = pitch;
           pitchSelect.appendChild(option);
         }
+        pitchSelect.dispatchEvent(new Event('change'));
       });
 
       pitchSelect.addEventListener('change', () => {
@@ -90,12 +99,18 @@ export function setupUI(sceneObjects, pitchLoader) {
         pitchLoader(currentPitchData, sceneObjects);
         updateScorebug(team, batter, pitcher, date, pitch);
       });
+
+      // Trigger initial population
+      teamSelect.selectedIndex = 0;
+      teamSelect.dispatchEvent(new Event('change'));
     });
 
+  // === TRAIL TOGGLE ===
   trailToggle.addEventListener('change', () => {
     setTrailVisibility(trailToggle.checked);
   });
 
+  // === BUTTONS ===
   replayBtn.addEventListener('click', () => {
     if (currentPitchData) {
       replayAnimation(currentPitchData, sceneObjects);
@@ -106,6 +121,52 @@ export function setupUI(sceneObjects, pitchLoader) {
     pauseAnimation();
   });
 
+  // === CAMERA TOGGLE ===
+  cameraSelect.addEventListener('change', () => {
+    setCamera(cameraSelect.value);
+  });
+
+  function setCamera(view) {
+    const { camera } = sceneObjects;
+
+    switch (view) {
+      case 'catcher':
+        camera.position.set(0, 2.5, -65);
+        camera.lookAt(0, 2.5, 0);
+        break;
+      case 'pitcher':
+        camera.position.set(0, 6.0, 5);
+        camera.lookAt(0, 2.0, -60.5);
+        break;
+      case 'rhh':
+        camera.position.set(1, 4.0, -65);
+        camera.lookAt(0, 1.5, 0);
+        break;
+      case 'lhh':
+        camera.position.set(-1, 4.0, -65);
+        camera.lookAt(0, 1.5, 0);
+        break;
+      case '1b':
+        camera.position.set(50, 4.5, -30);
+        camera.lookAt(0, 5, -30);
+        break;
+      case '3b':
+        camera.position.set(-50, 4.5, -30);
+        camera.lookAt(0, 5, -30);
+        break;
+      case 'side':
+        camera.position.set(-25, 2.5, -15);
+        camera.lookAt(0, 2.0, -30);
+        break;
+      case 'top':
+        camera.position.set(0, 80, -30);
+        camera.lookAt(0, 0, -30);
+        break;
+      default:
+        console.warn('Unknown camera view:', view);
+    }
+  }
+
   function updateScorebug(team, batter, pitcher, date, pitch) {
     document.getElementById('scorebugTeam').textContent = team;
     document.getElementById('scorebugOpponent').textContent = 'OPP';
@@ -113,6 +174,5 @@ export function setupUI(sceneObjects, pitchLoader) {
     document.getElementById('scorebugPitcher').textContent = pitcher;
     document.getElementById('scorebugInning').textContent = '1';
     document.getElementById('scorebugCount').textContent = '0-0';
-    // Optionally update Top/Bottom if stored
   }
 }

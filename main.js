@@ -144,12 +144,12 @@ function throwPitch(pitch) {
     velocity: {
       x: pitch.vx0,
       y: -pitch.vz0,
-      z: -pitch.vy0
+      z: pitch.vy0
     },
     accel: {
       x: pitch.ax,
       y: pitch.az,
-      z: -pitch.ay
+      z: pitch.ay
     },
     spinRate: pitch.release_spin_rate || 0,
     spinAxis: getSpinAxisVector(pitch.spin_axis || 0),
